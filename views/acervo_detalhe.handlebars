@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes Acervo</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Gestão de Bibliotecas</h1>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/livros">Livros</a></li>
+                <li><a href="/bibliotecas">Bibliotecas</a></li>
+                <li><a href="/usuarios">Usuários</a></li>
+                <li><a href="/acervo">Acervo</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <h2>Gerenciar Cópia #{{item.id}} - {{itemName}}</h2>
+        <form id="formStatus">
+            <div class="form-group">
+                <label>ID do Usuário para empréstimo (-1 para devolver/disponibilizar):</label>
+                <input type="number" name="idUsuario" value="{{item.idUsuario}}" required>
+            </div>
+            <button type="submit">Atualizar Status</button>
+        </form>
+    </main>
+    <script>
+        const id = {{item.id}};
+        document.getElementById('formStatus').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            const res = await fetch('/acervo/status/'+id, { 
+                method: 'PUT', 
+                headers:{'Content-Type':'application/json'}, 
+                body: JSON.stringify({ idUsuario: parseInt(data.idUsuario) })
+            });
+            
+            if(res.ok) { alert('Status atualizado!'); window.location.reload(); }
+            else { const err = await res.json(); alert('Erro: ' + err.error); }
+        });
+    </script>
+</body>
+</html>
